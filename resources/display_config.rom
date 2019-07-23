@@ -1,0 +1,4 @@
+(
+	title: "Stereogram Trainer",
+	dimensions: Some((500, 500)),
+)
