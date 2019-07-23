@@ -2,9 +2,11 @@ extern crate structopt;
 extern crate image;
 extern crate rand;
 extern crate amethyst;
+extern crate winit;
 
 mod stereogram;
 mod states;
+mod systems;
 
 use structopt::StructOpt;
 use amethyst::{
