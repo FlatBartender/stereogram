@@ -1,5 +1,5 @@
 use crate::states::game::*;
-
+use crate::stereogram::StereogramBuilder;
 use amethyst::{
     core::transform::Transform,
     ecs::prelude::*,
@@ -55,8 +55,47 @@ impl<'s> System<'s> for TargetClickSystem {
     }
 }
 
-//pub struct TargetRemoveSystem;
-//
-//impl<'s> System<'s> for TargetRemoveSystem {
-//
-//}
+pub struct TargetClickedSystem;
+
+impl<'s> System<'s> for TargetClickedSystem {
+    type SystemData = (
+        WriteStorage<'s, Target>,
+        WriteStorage<'s, Transform>,
+        WriteStorage<'s, Stereogram>,
+        Write<'s, Score>,
+        Write<'s, StereogramBuilder>,
+    );
+
+    fn run(&mut self, (mut targets, mut transforms, mut stereograms, mut score, mut stereogram_builder): Self::SystemData) {
+        use crate::{WIDTH, HEIGHT};
+
+        let mut changed = false;
+        for (target, transform) in (&mut targets, &mut transforms).join() {
+            if target.clicked {
+                target.clicked = false;
+                changed = true;
+                let new_transform = target.random_position();
+                *transform = new_transform;
+            }
+        }
+
+        if !changed {
+            return;
+        }
+
+        let mut image = GrayImage::new(WIDTH as u32, HEIGHT as u32);
+        for (target, transform) in (&targets, &transforms).join()  {
+            let x = transform.translation().x as u32;
+            let y = transform.translation().y as u32;
+            let w = target.width as u32;
+            let h = target.height as u32;
+
+            let blank = GrayImage::from_pixel(w, h, Luma([255]));
+            image.copy_from(blank, HEIGHT as u32 - x, y);
+        }
+
+        for (stereogram) in (&mut stereograms).join() {
+            
+        }
+    }
+}

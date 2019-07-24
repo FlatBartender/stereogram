@@ -27,16 +27,8 @@ fn initialize_cursor(world: &mut World) {
 }
 
 fn initialize_target(world: &mut World) {
-    use crate::{WIDTH, HEIGHT, TARGET_WIDTH, TARGET_HEIGHT};
-
-    let mut rng = thread_rng();
-
-    let x: f32 = rng.gen_range(TARGET_WIDTH, WIDTH - TARGET_WIDTH);
-    let y: f32 = rng.gen_range(TARGET_HEIGHT, HEIGHT - TARGET_HEIGHT);
-
-    let mut transform = Transform::default();
-
-    transform.set_translation_xyz(TARGET_WIDTH * 0.5 + x, TARGET_HEIGHT * 0.5 + y, 0.0);
+    let target = Target::new();
+    let transform = target.random_position();
 
     world.create_entity()
         .with(Target::new())
@@ -70,6 +62,20 @@ impl Target {
             height: TARGET_HEIGHT,
             clicked: false,
         }
+    }
+
+    fn random_position(&self) -> Transform {
+        use crate::{WIDTH, HEIGHT, TARGET_WIDTH, TARGET_HEIGHT};
+
+        let mut transform = Transform::default();
+        let mut rng = thread_rng();
+
+        let x: f32 = rng.gen_range(TARGET_WIDTH, WIDTH - TARGET_WIDTH);
+        let y: f32 = rng.gen_range(TARGET_HEIGHT, HEIGHT - TARGET_HEIGHT);
+
+        transform.set_translation_xyz(TARGET_WIDTH * 0.5 + x, TARGET_HEIGHT * 0.5 + y, 0.0);
+
+        transform
     }
 }
 
